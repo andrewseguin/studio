@@ -7,6 +7,7 @@ import { DEFAULT_LETTERS, getLetterInfo } from "@/lib/letters";
 import { LetterSelector } from "@/components/letter-selector";
 import { LetterDisplay } from "@/components/letter-display";
 import { FullscreenToggle } from "@/components/fullscreen-toggle";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const shuffle = (array: string[]) => {
   let currentIndex = array.length,
@@ -152,6 +153,7 @@ export default function Home() {
       tabIndex={-1}
     >
       <LetterDisplay content={displayContent} />
+      <ModeToggle />
       <FullscreenToggle />
       <LetterSelector
         selectedLetters={selectedLetters}
