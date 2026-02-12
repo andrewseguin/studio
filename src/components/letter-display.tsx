@@ -30,14 +30,14 @@ export function LetterDisplay({ content }: LetterDisplayProps) {
     <Card
       key={content.key}
       className={cn(
-        "shadow-xl animate-in fade-in zoom-in-95 duration-300",
+        "shadow-xl animate-in fade-in zoom-in-95 duration-300 w-[480px] h-[320px] border-none",
         content.color
       )}
     >
-      <CardContent className="p-4 sm:p-6 md:p-8 flex items-center justify-center">
+      <CardContent className="p-0 h-full flex items-center justify-center">
         <span
           className={cn(
-            "font-headline font-normal text-[15rem] sm:text-[20rem] md:text-[25rem] lg:text-[30rem] leading-none text-white",
+            "font-headline font-normal text-[20rem] leading-none text-white",
             "select-none [text-shadow:3px_3px_6px_rgba(0,0,0,0.2)]"
           )}
         >
