@@ -6,6 +6,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { DEFAULT_LETTERS, getLetterInfo } from "@/lib/letters";
 import { LetterSelector } from "@/components/letter-selector";
 import { LetterDisplay } from "@/components/letter-display";
+import { FullscreenToggle } from "@/components/fullscreen-toggle";
 
 const shuffle = (array: string[]) => {
   let currentIndex = array.length,
@@ -151,6 +152,7 @@ export default function Home() {
       tabIndex={-1}
     >
       <LetterDisplay content={displayContent} />
+      <FullscreenToggle />
       <LetterSelector
         selectedLetters={selectedLetters}
         setSelectedLetters={setSelectedLetters}
