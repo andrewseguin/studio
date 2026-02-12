@@ -72,9 +72,16 @@ export function LetterSelector({
                         {level.name}
                       </h5>
                     </div>
-                    <div className="grid grid-cols-4 gap-4 ml-5">
+                    <div class="grid grid-cols-4 gap-2 ml-5">
                       {level.letters.map((letter) => (
-                        <div key={letter.char} className="flex items-center space-x-2">
+                        <div
+                          key={letter.char}
+                          className="flex items-center space-x-2 p-3 rounded-md hover:bg-accent cursor-pointer transition-colors"
+                          onClick={() => {
+                            const isChecked = selectedLetters.includes(letter.char);
+                            handleLetterChange(letter.char, !isChecked);
+                          }}
+                        >
                           <Checkbox
                             id={`letter-${letter.char}`}
                             checked={selectedLetters.includes(letter.char)}
@@ -82,10 +89,11 @@ export function LetterSelector({
                               handleLetterChange(letter.char, !!checked)
                             }
                             aria-label={letter.char}
+                            className="h-5 w-5"
                           />
                           <Label
                             htmlFor={`letter-${letter.char}`}
-                            className="text-lg font-medium font-headline cursor-pointer"
+                            className="text-xl font-medium font-headline cursor-pointer pointer-events-none"
                           >
                             {letter.char}
                           </Label>
