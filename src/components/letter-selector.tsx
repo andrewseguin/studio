@@ -12,7 +12,6 @@ import {
 import { LETTER_LEVELS } from "@/lib/letters";
 import type { Dispatch, SetStateAction } from "react";
 import { ScrollArea } from "./ui/scroll-area";
-import { cn } from "@/lib/utils";
 
 type LetterSelectorProps = {
   selectedLetters: string[];
@@ -64,7 +63,10 @@ export function LetterSelector({
                 {LETTER_LEVELS.map((level) => (
                   <div key={level.level}>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className={cn("h-3 w-3 rounded-full", level.color)} />
+                      <span
+                        className="h-3 w-3 rounded-full"
+                        style={{ backgroundColor: level.color }}
+                      />
                       <h5 className="text-sm font-semibold font-headline text-foreground">
                         {level.name}
                       </h5>

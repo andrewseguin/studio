@@ -65,11 +65,6 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
-        'level-1': 'hsl(120 40% 85%)',
-        'level-2': 'hsl(205 60% 85%)',
-        'level-3': 'hsl(45 90% 85%)',
-        'level-4': 'hsl(0 80% 90%)',
-        'level-5': 'hsl(260 50% 90%)',
       },
       borderRadius: {
         lg: 'var(--radius)',
