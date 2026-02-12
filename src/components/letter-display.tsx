@@ -30,7 +30,7 @@ export function LetterDisplay({ content }: LetterDisplayProps) {
             key={content.key}
             initial={{ x: "-50%", y: "-60%", opacity: 0, scale: 0.9 }}
             animate={{ x: "-50%", y: "-50%", opacity: 1, scale: 1 }}
-            exit={{ x: "-50%", y: "100%", opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+            exit={{ x: "-50%", y: "100%", transition: { duration: 0.2 } }}
             className="max-w-xl font-body text-3xl sm:text-4xl md:text-5xl font-semibold text-accent px-8 text-center select-none absolute left-1/2 top-1/2 w-full"
           >
             {content.value}
@@ -43,7 +43,6 @@ export function LetterDisplay({ content }: LetterDisplayProps) {
             exit={{
               x: "-50%",
               y: "100vh",
-              opacity: 0,
               rotate: exitRotation,
               transition: { duration: 0.5, ease: "easeIn" },
             }}
