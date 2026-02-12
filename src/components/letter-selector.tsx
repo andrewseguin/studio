@@ -49,7 +49,7 @@ export function LetterSelector({
             <Settings className="h-6 w-6" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[600px]" align="end">
+        <PopoverContent className="w-[600px] max-h-[90vh] overflow-y-auto" align="end">
           <div className="grid gap-4">
             <div className="space-y-2">
               <h4 className="font-medium leading-none font-headline">
@@ -59,8 +59,7 @@ export function LetterSelector({
                 Select the letters you want to practice.
               </p>
             </div>
-            <ScrollArea className="h-[650px]">
-              <div className="space-y-4 pr-4">
+            <div className="space-y-4 pr-4">
                 {LETTER_LEVELS.map((level) => (
                   <div key={level.level}>
                     <div className="flex items-center gap-2 mb-2">
@@ -103,7 +102,6 @@ export function LetterSelector({
                   </div>
                 ))}
               </div>
-            </ScrollArea>
           </div>
         </PopoverContent>
       </Popover>
