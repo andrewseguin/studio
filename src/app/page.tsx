@@ -84,7 +84,7 @@ export default function Home() {
     }
   }, [availableLetters, displayContent]);
 
-  const showNextContent = useCallback(async () => {
+  const showNextContent = useCallback(() => {
     if (isLoading) return;
     setIsLoading(true);
 
@@ -94,7 +94,7 @@ export default function Home() {
         type: "message",
         value: "Choose some letters in the menu!",
       });
-      setIsLoading(false);
+      setTimeout(() => setIsLoading(false), 1000);
       return;
     }
 
@@ -116,8 +116,8 @@ export default function Home() {
       color: letterData?.color,
     });
 
-    setIsLoading(false);
-  }, [isLoading, availableLetters, lettersInCycle]);
+    setTimeout(() => setIsLoading(false), 1000);
+  }, [isLoading, availableLetters, lettersInCycle, setLettersInCycle]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
