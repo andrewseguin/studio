@@ -33,7 +33,10 @@ export default function Home() {
     DEFAULT_LETTERS
   );
 
-  const [lettersInCycle, setLettersInCycle] = useState<string[]>([]);
+  const [lettersInCycle, setLettersInCycle] = useLocalStorage<string[]>(
+    "peek-a-letter-cycle",
+    []
+  );
   const lastChangeTimeRef = useRef(0);
 
   const availableLetters = useMemo(() => {
@@ -55,7 +58,7 @@ export default function Home() {
   
   useEffect(() => {
     setLettersInCycle([]);
-  }, [availableLetters]);
+  }, [availableLetters, setLettersInCycle]);
 
   useEffect(() => {
     if (availableLetters.length === 0) {
@@ -85,7 +88,7 @@ export default function Home() {
 
   const showNextContent = useCallback(() => {
     const now = Date.now();
-    if (now - lastChangeTimeRef.current < 1000) {
+    if (now - lastChangeTimeRef.current < 300) {
       return;
     }
     lastChangeTimeRef.current = now;
