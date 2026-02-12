@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
@@ -25,6 +26,7 @@ type DisplayContent = {
   type: "letter" | "message";
   value: string;
   color?: string;
+  textColor?: string;
 };
 
 export default function Home() {
@@ -51,6 +53,7 @@ export default function Home() {
       type: "letter" as const,
       value: letter,
       color: data?.color,
+      textColor: data?.textColor,
     }
   }
 
@@ -82,6 +85,7 @@ export default function Home() {
         type: "letter",
         value: firstLetter,
         color: data?.color,
+        textColor: data?.textColor,
       });
     }
   }, [availableLetters, displayContent]);
@@ -118,6 +122,7 @@ export default function Home() {
       type: "letter",
       value: newLetter,
       color: letterData?.color,
+      textColor: letterData?.textColor,
     });
   }, [availableLetters, lettersInCycle, setLettersInCycle]);
 

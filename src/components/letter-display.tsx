@@ -1,3 +1,4 @@
+
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -8,6 +9,7 @@ type DisplayContent = {
   type: "letter" | "message";
   value: string;
   color?: string;
+  textColor?: string;
 };
 
 type LetterDisplayProps = {
@@ -35,9 +37,10 @@ export function LetterDisplay({ content }: LetterDisplayProps) {
       <CardContent className="p-0 h-full flex items-center justify-center">
         <span
           className={cn(
-            "font-headline font-normal text-[15rem] leading-none text-white",
+            "font-headline font-normal text-[15rem] leading-none",
             "select-none [text-shadow:3px_3px_6px_rgba(0,0,0,0.2)]"
           )}
+          style={{ color: content.textColor || 'white' }}
         >
           {content.value}
         </span>
