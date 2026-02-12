@@ -2,14 +2,10 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import useLocalStorage from "@/hooks/use-local-storage";
-import { DEFAULT_LETTERS, getLetterData, LETTER_LEVELS } from "@/lib/letters";
+import { DEFAULT_LETTERS, getLetterData } from "@/lib/letters";
 import { LetterSelector } from "@/components/letter-selector";
 import { LetterDisplay } from "@/components/letter-display";
-import { getEncouragement } from "@/app/actions";
-import { useToast } from "@/hooks/use-toast";
 import { Loader } from "lucide-react";
-
-const ENCOURAGEMENT_INTERVAL = 5;
 
 const shuffle = (array: string[]) => {
   let currentIndex = array.length,
@@ -56,9 +52,7 @@ export default function Home() {
   }
 
   const [displayContent, setDisplayContent] = useState<DisplayContent>(getInitialLetter());
-  const [sessionCount, setSessionCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
   
   useEffect(() => {
     setLettersInCycle([]);
@@ -94,66 +88,36 @@ export default function Home() {
     if (isLoading) return;
     setIsLoading(true);
 
-    const newCount = sessionCount + 1;
-    setSessionCount(newCount);
-
-    try {
-      if (
-        newCount % ENCOURAGEMENT_INTERVAL === 0 &&
-        availableLetters.length > 0
-      ) {
-        const message = await getEncouragement();
-        setDisplayContent({
-          key: Date.now().toString(),
-          type: "message",
-          value: message,
-        });
-      } else {
-        if (availableLetters.length === 0) {
-          setDisplayContent({
-            key: "no-letters-msg",
-            type: "message",
-            value: "Choose some letters in the menu!",
-          });
-          setIsLoading(false);
-          return;
-        }
-
-        let currentCycle = lettersInCycle;
-        if (currentCycle.length === 0) {
-          currentCycle = shuffle([...availableLetters]);
-        }
-        
-        const newLetter = currentCycle[0];
-        const newCycle = currentCycle.slice(1);
-        setLettersInCycle(newCycle);
-
-        const letterData = getLetterData(newLetter);
-
-        setDisplayContent({
-          key: Date.now().toString(),
-          type: "letter",
-          value: newLetter,
-          color: letterData?.color,
-        });
-      }
-    } catch (error) {
-      console.error("Failed to fetch content:", error);
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
+    if (availableLetters.length === 0) {
+      setDisplayContent({
+        key: "no-letters-msg",
+        type: "message",
+        value: "Choose some letters in the menu!",
       });
-    } finally {
       setIsLoading(false);
+      return;
     }
-  }, [
-    isLoading,
-    sessionCount,
-    availableLetters,
-    toast,
-    lettersInCycle,
-  ]);
+
+    let currentCycle = lettersInCycle;
+    if (currentCycle.length === 0) {
+      currentCycle = shuffle([...availableLetters]);
+    }
+    
+    const newLetter = currentCycle[0];
+    const newCycle = currentCycle.slice(1);
+    setLettersInCycle(newCycle);
+
+    const letterData = getLetterData(newLetter);
+
+    setDisplayContent({
+      key: Date.now().toString(),
+      type: "letter",
+      value: newLetter,
+      color: letterData?.color,
+    });
+
+    setIsLoading(false);
+  }, [isLoading, availableLetters, lettersInCycle]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

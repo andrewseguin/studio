@@ -62,7 +62,7 @@ export function LetterSelector({
               <div className="space-y-4 pr-4">
                 {LETTER_LEVELS.map((level) => (
                   <div key={level.level}>
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-2">
                       <span
                         className="h-3 w-3 rounded-full"
                         style={{ backgroundColor: level.color }}
@@ -71,9 +71,6 @@ export function LetterSelector({
                         {level.name}
                       </h5>
                     </div>
-                    <p className="text-xs text-muted-foreground mb-2 ml-5">
-                      {level.description}
-                    </p>
                     <div className="grid grid-cols-4 gap-4 ml-5">
                       {level.letters.map((letter) => (
                         <div key={letter} className="flex items-center space-x-2">
