@@ -49,7 +49,7 @@ export function LetterSelector({
             <Settings className="h-6 w-6" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[600px] max-h-[90vh] overflow-y-auto" align="end">
+        <PopoverContent className="w-[500px] max-h-[90vh] overflow-y-auto" align="end">
           <div className="grid gap-4">
             <div className="space-y-2">
               <h4 className="font-medium leading-none font-headline text-lg">
