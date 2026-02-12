@@ -10,7 +10,7 @@ export const LETTER_LEVELS = [
       { char: "a", verticalOffset: -1 },
       { char: "t" },
       { char: "p", verticalOffset: -2.5 },
-      { char: "i", verticalOffset: -1 },
+      { char: "i" },
       { char: "n", verticalOffset: -1 },
     ], color: "#00A651", textColor: "#FFFFFF" },
   { level: 2, name: "Level 2", letters: [
