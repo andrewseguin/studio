@@ -38,22 +38,23 @@ export function LetterDisplay({ content }: LetterDisplayProps) {
         ) : (
           <motion.div
             key={content.key}
-            initial={{ x: "-50%", y: "-60%", opacity: 0, scale: 0.9, boxShadow: "0 1px 1px rgba(0,0,0,0.12), 0 2px 2px rgba(0,0,0,0.12), 0 4px 4px rgba(0,0,0,0.12), 0 8px 8px rgba(0,0,0,0.12), 0 16px 16px rgba(0,0,0,0.12)" }}
-            animate={{ x: "-50%", y: "-50%", opacity: 1, scale: 1, boxShadow: "0 1px 1px rgba(0,0,0,0.12), 0 2px 2px rgba(0,0,0,0.12), 0 4px 4px rgba(0,0,0,0.12), 0 8px 8px rgba(0,0,0,0.12), 0 16px 16px rgba(0,0,0,0.12)" }}
+            initial={{ x: "-50%", y: "-60%", opacity: 0, scale: 0.9 }}
+            animate={{ x: "-50%", y: "-50%", opacity: 1, scale: 1 }}
             exit={{
               x: "-50%",
               y: "100vh",
               rotate: exitRotation,
-              boxShadow: "0 0px 0px rgba(0,0,0,0)",
               transition: { duration: 0.5, ease: "easeIn" },
             }}
-            className="absolute left-1/2 top-1/2 rounded-lg"
+            className="absolute left-1/2 top-1/2"
             style={{ zIndex: 10 }}
           >
             <Card
               className="w-[700px] h-[350px] border-none"
               style={{
                 backgroundColor: content.color,
+                boxShadow:
+                  "0 1px 1px rgba(0,0,0,0.12), 0 2px 2px rgba(0,0,0,0.12), 0 4px 4px rgba(0,0,0,0.12), 0 8px 8px rgba(0,0,0,0.12), 0 16px 16px rgba(0,0,0,0.12)",
                 borderTop: "1px solid rgba(255,255,255,0.2)",
                 borderLeft: "1px solid rgba(255,255,255,0.1)",
               }}
