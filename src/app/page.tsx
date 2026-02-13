@@ -302,7 +302,6 @@ export default function Home() {
     >
       <LetterDisplay content={displayContent} />
       <div className="absolute top-4 right-4 flex items-center gap-2" onPointerDown={(e) => e.stopPropagation()}>
-        <FullscreenToggle />
         <LetterSelector
           selectedLetters={selectedLetters}
           setSelectedLetters={setSelectedLetters}
@@ -316,6 +315,7 @@ export default function Home() {
           showTimer={showTimer}
           onShowTimerChange={setShowTimer}
         />
+        <FullscreenToggle />
       </div>
       {(showCardCount || showTimer) && (
         <SessionStats
