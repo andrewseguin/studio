@@ -39,7 +39,7 @@ export default function Home() {
   const [hydrated, setHydrated] = useState(false);
   const [selectedLetters, setSelectedLetters] = useLocalStorage<string[]>(
     "first-read-selection",
-    []
+    DEFAULT_LETTERS
   );
 
   const [gameMode, setGameMode] = useLocalStorage<string>(
