@@ -42,7 +42,7 @@ export function LetterDisplay({ content }: LetterDisplayProps) {
     return (
       <Card
         key={content.key}
-        className="relative animate-in fade-in zoom-in-95 duration-300 w-[90vw] h-[45vw] max-w-[700px] max-h-[350px] border-none" // Responsive card size
+        className="relative animate-fade-in-zoom w-[90vw] h-[45vw] max-w-[700px] max-h-[350px] border-none" // Responsive card size
         style={{
           backgroundColor: content.color,
           boxShadow: "0 1px 1px rgba(0,0,0,0.12), 0 2px 2px rgba(0,0,0,0.12), 0 4px 4px rgba(0,0,0,0.12), 0 8px 8px rgba(0,0,0,0.12), 0 16px 16px rgba(0,0,0,0.12)",
