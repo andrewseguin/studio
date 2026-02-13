@@ -166,7 +166,13 @@ export default function Home() {
       }
       setCardCount((prev) => prev + 1);
 
-      let currentCycle = wordsInCycle;
+      let currentCycle = wordsInCycle.filter(w => selectedWordLengths.includes(w.length));
+
+      // Filter out hard words if in easy mode
+      if (wordDifficulty === 'easy') {
+        currentCycle = currentCycle.filter(w => !HARD_WORDS.includes(w));
+      }
+
       if (currentCycle.length === 0) {
         currentCycle = shuffle([...possibleWords]);
         if (
@@ -334,15 +340,17 @@ const getHighestLevelInfoForWord = (word: string) => {
   }, [gameMode, showNextContent]);
 
   useEffect(() => {
+    const isLengthInvalid = !selectedWordLengths.includes(displayContentRef.current.value.length);
+    const isDifficultyInvalid = wordDifficulty === 'easy' && HARD_WORDS.includes(displayContentRef.current.value);
+
     if (
       gameMode === 'words' &&
       displayContentRef.current.type === 'word' &&
-      !selectedWordLengths.includes(displayContentRef.current.value.length)
+      (isLengthInvalid || isDifficultyInvalid)
     ) {
-      setWordsInCycle([]); // Reset the cycle
       showNextContent(true); // Show a new word from the new valid pool
     }
-  }, [selectedWordLengths, gameMode, showNextContent, setWordsInCycle]);
+  }, [selectedWordLengths, gameMode, showNextContent, wordDifficulty]);
 
   const handleInteraction = () => {
     showNextContent();
