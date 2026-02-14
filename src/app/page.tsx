@@ -25,6 +25,25 @@ const shuffle = (array: string[]) => {
   return array;
 };
 
+const getHighestLevelInfoForWord = (word: string) => {
+  let highestLevel = -1;
+  let color = "#000000"; // Default color
+  let textColor = "#FFFFFF"; // Default text color
+
+  for (const char of word) {
+    const letterInfo = getLetterInfo(char);
+    if (letterInfo) {
+      const level = LETTER_LEVELS.findIndex(lvl => lvl.letters.some(l => l.char === char));
+      if (level > highestLevel) {
+        highestLevel = level;
+        color = letterInfo.color || color;
+        textColor = letterInfo.textColor || textColor;
+      }
+    }
+  }
+  return { color, textColor };
+};
+
 type DisplayContent = {
   key: string;
   type: "letter" | "message" | "word";
@@ -113,12 +132,17 @@ export default function Home() {
     }
   }
 
-  const [displayContent, setDisplayContent] = useLocalStorage<DisplayContent>(
-    "first-read-display-content",
-    getInitialLetter()
+  const [history, setHistory] = useLocalStorage<DisplayContent[]>(
+    "first-read-history",
+    [getInitialLetter()]
   );
-  const displayContentRef = useRef(displayContent);
-  displayContentRef.current = displayContent;
+  const [historyIndex, setHistoryIndex] = useState(history.length - 1);
+  const displayContent = history[historyIndex];
+  const displayContentRef = useRef<DisplayContent>(getInitialLetter());
+
+  useEffect(() => {
+    displayContentRef.current = displayContent;
+  }, [displayContent]);
   
   useEffect(() => {
     setLettersInCycle([]);
@@ -128,7 +152,7 @@ export default function Home() {
     setWordsInCycle([]);
   }, [availableLetters, wordDifficulty, setWordsInCycle]);
 
-  const showNextContent = useCallback((force = false) => {
+  const showNextContent = useCallback((force = false, isInteraction = false) => {
     if (isMenuOpenRef.current && !force) return;
     
     const now = Date.now();
@@ -157,14 +181,19 @@ export default function Home() {
       });
 
       if (possibleWords.length === 0) {
-        setDisplayContent({
+        const newContent: DisplayContent = {
           key: "no-words-msg",
           type: "message",
           value: "No words can be formed with these letters.",
-        });
+        };
+        const newHistory = history.slice(0, historyIndex + 1);
+        setHistory([...newHistory, newContent]);
+        setHistoryIndex(newHistory.length);
         return;
       }
-      setCardCount((prev) => prev + 1);
+      if (isInteraction) {
+        setCardCount((prev) => prev + 1);
+      }
 
       let currentCycle = wordsInCycle.filter(w => selectedWordLengths.includes(w.length));
 
@@ -187,44 +216,30 @@ export default function Home() {
         }
       }
 
-const getHighestLevelInfoForWord = (word: string) => {
-  let highestLevel = -1;
-  let color = "#000000"; // Default color
-  let textColor = "#FFFFFF"; // Default text color
-
-  for (const char of word) {
-    const letterInfo = getLetterInfo(char);
-    if (letterInfo) {
-      const level = LETTER_LEVELS.findIndex(lvl => lvl.letters.some(l => l.char === char));
-      if (level > highestLevel) {
-        highestLevel = level;
-        color = letterInfo.color || color;
-        textColor = letterInfo.textColor || textColor;
-      }
-    }
-  }
-  return { color, textColor };
-};
-
-// ... inside the showNextContent function, within the gameMode === 'words' block
       const newWord = currentCycle[0];
       const newCycle = currentCycle.slice(1);
       setWordsInCycle(newCycle);
 
       const { color, textColor } = getHighestLevelInfoForWord(newWord);
       const isHard = HARD_WORDS.includes(newWord);
-      setDisplayContent({
+
+      const newContent = {
         key: Date.now().toString(),
-        type: "word",
+        type: "word" as const,
         value: newWord,
         color: color,
         textColor: textColor,
         isHardWord: isHard,
-      });
+      };
+      const newHistory = history.slice(0, historyIndex + 1);
+      setHistory([...newHistory, newContent]);
+      setHistoryIndex(newHistory.length);
       return;
     }
 
-    setCardCount((prev) => prev + 1);
+    if (isInteraction) {
+      setCardCount((prev) => prev + 1);
+    }
     let currentCycle = lettersInCycle;
     if (currentCycle.length === 0) {
       currentCycle = shuffle([...availableLetters]);
@@ -246,95 +261,111 @@ const getHighestLevelInfoForWord = (word: string) => {
 
     const letterData = getLetterInfo(newLetter);
 
-    setDisplayContent({
+    const newContent = {
       key: Date.now().toString(),
-      type: "letter",
+      type: "letter" as const,
       value: newLetter,
       color: letterData?.color,
       textColor: letterData?.textColor,
       verticalOffset: letterData?.verticalOffset,
-    });
-  }, [availableLetters, lettersInCycle, setLettersInCycle, gameMode, wordDifficulty, setDisplayContent, wordsInCycle, setWordsInCycle, selectedWordLengths]);
+    };
+    const newHistory = history.slice(0, historyIndex + 1);
+    setHistory([...newHistory, newContent]);
+    setHistoryIndex(newHistory.length);
+  }, [availableLetters, lettersInCycle, setLettersInCycle, gameMode, wordDifficulty, history, historyIndex, setHistory, setHistoryIndex, wordsInCycle, setWordsInCycle, selectedWordLengths]);
 
   const prevSelectedLettersRef = useRef<string[]>(selectedLetters);
 
   useEffect(() => {
     if (gameMode === 'words') {
-      showNextContent(true); // `true` to force it even if menu is open
+      showNextContent(true, false); // `true` to force it even if menu is open
       prevSelectedLettersRef.current = selectedLetters;
-      return; // End of effect for word mode
     }
+  }, [gameMode, selectedLetters, showNextContent]);
+  
+  useEffect(() => {
+    if (gameMode === 'letters') {
+      // If selectedLetters is empty, always show the message.
+      if (selectedLetters.length === 0) {
+        const newContent: DisplayContent = {
+          key: "no-letters",
+          type: "message",
+          value: "Choose some letters in the menu!",
+        };
+        setHistory([newContent]);
+        setHistoryIndex(0);
+        prevSelectedLettersRef.current = selectedLetters;
+        return;
+      }
 
-    // --- The rest of the logic is for 'letters' mode ---
-
-    // 1. If selectedLetters is empty, always show the message.
-    if (selectedLetters.length === 0) {
-      setDisplayContent({
-        key: "no-letters",
-        type: "message",
-        value: "Choose some letters in the menu!",
-      });
-      prevSelectedLettersRef.current = selectedLetters;
-      return;
-    }
-
-    // 2. A brand new first letter was added (or hydrating from empty). Show it immediately.
-    if (prevSelectedLettersRef.current.length === 0 && selectedLetters.length > 0) {
-      const newLetter = selectedLetters[0];
-      const data = getLetterInfo(newLetter);
-      setDisplayContent({
-        key: "new-letter-added",
-        type: "letter",
-        value: newLetter,
-        color: data?.color,
-        textColor: data?.textColor,
-        verticalOffset: data?.verticalOffset,
-      });
-      prevSelectedLettersRef.current = selectedLetters;
-      return;
-    }
-
-    // Handle state corrections using a functional update to avoid race conditions.
-    setDisplayContent(prev => {
-      // 3. Hydration fix: Display is a message, but we have letters now.
-      if (prev.type === 'message') {
-        const firstLetter = selectedLetters[0];
-        const data = getLetterInfo(firstLetter);
-        return {
-          key: "hydration-fix",
+      // A brand new first letter was added (or hydrating from empty). Show it immediately.
+      if (prevSelectedLettersRef.current.length === 0 && selectedLetters.length > 0) {
+        const newLetter = selectedLetters[0];
+        const data = getLetterInfo(newLetter);
+        const newContent: DisplayContent = {
+          key: "new-letter-added",
           type: "letter",
-          value: firstLetter,
+          value: newLetter,
           color: data?.color,
           textColor: data?.textColor,
           verticalOffset: data?.verticalOffset,
         };
+        setHistory([newContent]);
+        setHistoryIndex(0);
+        prevSelectedLettersRef.current = selectedLetters;
+        return;
       }
 
-      // 4. Deselection fix: Displayed letter is no longer in the set.
-      if (prev.type === 'letter' && !selectedLetters.includes(prev.value)) {
-        const firstLetter = selectedLetters[0];
-        const data = getLetterInfo(firstLetter);
-        return {
-          key: "update-from-selection",
-          type: "letter",
-          value: firstLetter,
-          color: data?.color,
-          textColor: data?.textColor,
-          verticalOffset: data?.verticalOffset,
-        };
+      // Handle state corrections
+      const newContent = (prevDisplayContent: DisplayContent): DisplayContent => {
+        // Hydration fix: Display is a message, but we have letters now.
+        if (prevDisplayContent.type === 'message') {
+          const firstLetter = selectedLetters[0];
+          const data = getLetterInfo(firstLetter);
+          return {
+            key: "hydration-fix",
+            type: "letter",
+            value: firstLetter,
+            color: data?.color,
+            textColor: data?.textColor,
+            verticalOffset: data?.verticalOffset,
+          };
+        }
+
+        // Deselection fix: Displayed letter is no longer in the set.
+        if (prevDisplayContent.type === 'letter' && !selectedLetters.includes(prevDisplayContent.value)) {
+          const firstLetter = selectedLetters[0];
+          const data = getLetterInfo(firstLetter);
+          return {
+            key: "update-from-selection",
+            type: "letter",
+            value: firstLetter,
+            color: data?.color,
+            textColor: data?.textColor,
+            verticalOffset: data?.verticalOffset,
+          };
+        }
+
+        // All other cases: The display is a letter that's still valid. Do nothing.
+        return prevDisplayContent;
+      };
+
+      // Only update history if the content actually changes
+      const updatedContent = newContent(displayContent);
+      if (updatedContent !== displayContent) {
+        const newHistory = history.slice(0, historyIndex + 1);
+        setHistory([...newHistory, updatedContent]);
+        setHistoryIndex(newHistory.length);
       }
-
-      // 5. All other cases: The display is a letter that's still valid. Do nothing.
-      return prev;
-    });
-
-    prevSelectedLettersRef.current = selectedLetters;
-  }, [selectedLetters, setDisplayContent, gameMode, showNextContent]);
+    
+      prevSelectedLettersRef.current = selectedLetters;
+    }
+  }, [gameMode, selectedLetters, history, historyIndex, displayContent]);
   
   const prevGameModeRef = useRef(gameMode);
   useEffect(() => {
     if(prevGameModeRef.current !== gameMode) {
-      showNextContent(true);
+      showNextContent(true, false);
       prevGameModeRef.current = gameMode;
     }
   }, [gameMode, showNextContent]);
@@ -348,23 +379,35 @@ const getHighestLevelInfoForWord = (word: string) => {
       displayContentRef.current.type === 'word' &&
       (isLengthInvalid || isDifficultyInvalid)
     ) {
-      showNextContent(true); // Show a new word from the new valid pool
+      showNextContent(true, false); // Show a new word from the new valid pool
     }
   }, [selectedWordLengths, gameMode, showNextContent, wordDifficulty]);
 
   const handleInteraction = () => {
-    showNextContent();
+    showNextContent(false, true);
   };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
         event.code === "Space" ||
-        event.code === "ArrowDown" ||
-        event.code === "ArrowRight"
+        event.code === "ArrowDown"
       ) {
         event.preventDefault();
-        handleInteraction();
+        showNextContent(false, true);
+      } else if (event.code === "ArrowLeft") {
+        event.preventDefault();
+        if (historyIndex > 0) {
+          setHistoryIndex((prev) => prev - 1);
+        }
+      } else if (event.code === "ArrowRight") {
+        event.preventDefault();
+        if (historyIndex < history.length - 1) {
+          setHistoryIndex((prev) => prev + 1);
+        } else {
+          // If at the end of history, generate new content
+          showNextContent(false, true);
+        }
       }
     };
 
@@ -372,7 +415,7 @@ const getHighestLevelInfoForWord = (word: string) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [showNextContent]);
+  }, [showNextContent, historyIndex, history.length, setHistoryIndex]);
 
   if (!hydrated) {
     return null;
