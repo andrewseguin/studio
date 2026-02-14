@@ -17,8 +17,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="manifest" href="/first-read/manifest.json" />
-        <link rel="icon" href="/first-read/logo.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/logo.png" />
         <meta name="theme-color" content="#09090b" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

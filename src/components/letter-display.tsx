@@ -107,12 +107,12 @@ export function LetterDisplay({ content }: LetterDisplayProps) {
           {content.type === "letter" && (
             <Button
               variant="ghost"
-              size="icon"
+              size="icon-lg"
               className="absolute bottom-4 right-4 text-foreground/70 hover:text-foreground"
               onClick={(e) => speakLetter(e)}
               onPointerDown={(e) => e.stopPropagation()}
             >
-              {isPlaying ? <Volume2 className="h-8 w-8" /> : <Speaker className="h-8 w-8" />}
+              {isPlaying ? <Volume2 className="h-12 w-12" /> : <Speaker className="h-12 w-12" />}
             </Button>
           )}
         </CardContent>
